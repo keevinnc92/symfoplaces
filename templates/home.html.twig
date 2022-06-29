@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+{% block title %}Portada{% endblock %}
+{% block main %}
+	{{ parent() }}
+
+ {% block header %}
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <div class="text-center">
+                        <h1 class="mx-auto my-0 text-uppercase">SymfoPlaces</h1>
+                        <h2 class="text-white-50 mx-auto mt-2 mb-5">Atrevete a descubrir nuevos mundos</h2>
+                        <a class="btn btn-primary" href="#about">Explorar</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+ {% endblock %}
+        <!-- Projects-->
+        <section class="projects-section bg-light" id="projects">
+            <div class="container px-4 px-lg-5">
+                <!-- Project One Row-->
+                <div class="row gx-0 mb-5 mb-lg-0 justify-content-center">
+                    <div class="col-lg-6"><img class="img-fluid" src="{{ asset('images/template/demo-image-01.jpg')}}" alt="..." /></div>
+                    <div class="col-lg-6">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-left">
+                                    <h4 class="text-white">Playa</h4>
+                                    <p class="mb-0 text-white-50">Una playa paradisiaca para desconectar...</p>
+                                    <hr class="d-none d-lg-block mb-0 ms-0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Project Two Row-->
+                <div class="row gx-0 justify-content-center">
+                    <div class="col-lg-6"><img class="img-fluid"  src="{{ asset('images/template/demo-image-02.jpg')}}" alt="..." /></div>
+                    <div class="col-lg-6 order-lg-first">
+                        <div class="bg-black text-center h-100 project">
+                            <div class="d-flex h-100">
+                                <div class="project-text w-100 my-auto text-center text-lg-right">
+                                    <h4 class="text-white">Montaña</h4>
+                                    <p class="mb-0 text-white-50">O quizás el reto de escalar una montaña?</p>
+                                    <hr class="d-none d-lg-block mb-0 me-0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+{% endblock %}
