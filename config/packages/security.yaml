@@ -16,6 +16,20 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            custom_authenticator: App\Security\LoginFormAuthenticator
+            form_login:
+                enable_csrf: true
+                login_path: app_login
+                check_path: app_login
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                target: /
+            entry_point: form_login
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path:   /
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
