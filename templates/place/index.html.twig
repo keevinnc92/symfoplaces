@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+{% block title %}List places{% endblock %}
+{% block main %}
+    {{ parent() }}
+
+        <!-- Projects-->
+        <section class="projects-section bg-light" id="projects">
+            <div class="container px-4 px-lg-5">
+
+                <!-- Project Two Row-->
+                <div class="row gx-0 justify-content-center">
+                    <div class="col-lg-6 order-lg-first">
+                        <div style="margin-bottom: 30px;" >
+                            <a href="{{ path('app_place_new') }}">+Create new</a>
+                        </div>
+                        <h1>List place</h1>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Valoration</th>
+                                    <th>Country</th>
+                                    <th>Type</th>
+                                    <th>actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for place in places %}
+                                <tr>
+                                    <td>{{ place.id }}</td>
+                                    <td>{{ place.name }}</td>
+                                    <td>{{ place.valoration }}</td>
+                                    <td>{{ place.country }}</td>
+                                    <td>{{ place.type }}</td>
+                                    <td>
+                                        <a href="{{ path('app_place_show', {'id': place.id}) }}">show</a>
+                                        <a href="{{ path('app_place_edit', {'id': place.id}) }}">edit</a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="6">no records found</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
