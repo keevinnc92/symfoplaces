@@ -10,6 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+
+use Psr\Log\LoggerInterface;
+
+
 #[Route('/place')]
 class PlaceController extends AbstractController
 {
@@ -22,7 +26,7 @@ class PlaceController extends AbstractController
     }
 
     #[Route('/new', name: 'app_place_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, PlaceRepository $placeRepository): Response
+    public function new(Request $request, PlaceRepository $placeRepository, LoggerInterface $appInfoLogger): Response
     {
         $place = new Place();
         $form = $this->createForm(PlaceType::class, $place);
@@ -33,11 +37,19 @@ class PlaceController extends AbstractController
             if ($this->getUser()) {
                 $place->setUser($this->getUser());
                 $placeRepository->add($place, true);
+                
+                $message = 'Place created successfully';
+                $this->addFlash('success', $message);
+
             }else{
             // $this->addFlash('success', 'Your email address has been verified.');
-                $this->addFlash('danger', 'User could not be retrieved');
+                $message = 'User could not be retrieved';
 
+                $this->addFlash('danger', $message);
             }
+            
+            // log
+            $appInfoLogger->info($message);
 
             return $this->redirectToRoute('app_place_index', [], Response::HTTP_SEE_OTHER);
         }
