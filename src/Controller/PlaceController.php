@@ -10,8 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use App\Form\SearchFormType;
 
 use Psr\Log\LoggerInterface;
+use App\Service\SimpleSearchService;
 
 
 #[Route('/place')]
@@ -60,7 +62,7 @@ class PlaceController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_place_show', methods: ['GET'])]
+    #[Route('/{id<\d+>}', name: 'app_place_show', methods: ['GET'])]
     public function show(Place $place): Response
     {
         return $this->render('place/show.html.twig', [
@@ -68,7 +70,7 @@ class PlaceController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_place_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id<\d+>}/edit', name: 'app_place_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Place $place, PlaceRepository $placeRepository): Response
     {
         $form = $this->createForm(PlaceType::class, $place);
@@ -86,13 +88,52 @@ class PlaceController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_place_delete', methods: ['POST'])]
+    #[Route('delete/{id<\d+>}', name: 'app_place_delete', methods: ['GET', 'POST'])]
     public function delete(Request $request, Place $place, PlaceRepository $placeRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$place->getId(), $request->request->get('_token'))) {
             $placeRepository->remove($place, true);
         }
-
         return $this->redirectToRoute('app_place_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/search', name: 'place_search', methods: ['GET', 'POST'])]
+    public function search(Request $request, SimpleSearchService $busqueda):Response{
+
+        // crea el formulario
+        $formulario = $this->createForm(SearchFormType::class, $busqueda, [
+            'field_choices' => [
+                'Name' => 'name',
+                'Valoration' => 'valoration',
+                'Country' => 'country',
+                'Type' => 'type'
+            ],
+            'order_choices' => [
+                'ID' => 'id',
+                'Name' => 'name',
+                'Valoration' => 'valoration',
+                'Country' => 'country',
+                'Type' => 'type'
+            ]
+        ]);
+
+        $formulario->get('campo')->setData($busqueda->campo);
+        $formulario->get('orden')->setData($busqueda->orden);
+
+        // gestiona el formulario y recupera los valores de búsqueda
+        $formulario->handleRequest($request);
+
+        //realiza la búsqueda
+        $places = $busqueda->search('App\Entity\Place');
+
+        //retorna la vista con los resultados
+        return $this->renderForm("place/search.html.twig", [
+            "formulario" => $formulario,
+            "places" => $places
+        ]);
+
+    }
+
+
+
 }

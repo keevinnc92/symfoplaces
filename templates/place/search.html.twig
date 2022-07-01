@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+{% block title %}Portada{% endblock %}
+{% block main %}
+	{{ parent() }}
+
+        <!-- Projects-->
+        <section class="projects-section bg-light" id="projects">
+            <div class="container px-4 px-lg-5">
+
+                <!-- Project Two Row-->
+                <div class="row gx-0 justify-content-center">
+                    <div class="col-lg-12 order-lg-first">
+
+						<div class="bg-light border row align-items-center justify-content-center my-3 p-1">
+							{{ form_start(formulario) }}
+							<div class="row">
+								<div class="col">{{ form_row(formulario.valor)}}</div>
+								<div class="col">{{ form_row(formulario.campo)}}</div>
+								<div class="col">{{ form_row(formulario.orden)}}</div>
+								<div class="col">{{ form_row(formulario.sentido)}}</div>
+								<div class="col">{{ form_row(formulario.limite)}}</div>
+								<div class="col">{{ form_row(formulario.Buscar)}}</div>
+								{{ form_rest(formulario) }}
+							</div>
+							{{ form_end(formulario) }}
+						</div>
+
+							{# LISTADO DE PELÍCULAS #}
+			{% include '/place/only_list.html.twig' %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+		
+
+
+
+{% endblock %}
+
+
