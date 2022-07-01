@@ -18,6 +18,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Psr\Log\LoggerInterface;
+use App\Form\UserDeleteFormType;
+
+// session
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
+
 class RegistrationController extends AbstractController
 {
     private EmailVerifier $emailVerifier;
@@ -96,5 +105,58 @@ class RegistrationController extends AbstractController
         $this->addFlash('success', 'Your email address has been verified.');
 
         return $this->redirectToRoute('app_home');
+    }
+
+
+    // unsubscribe user
+    #[Route('/unsubscribe}', name: 'unsubscribe', methods: ['GET', 'POST'])]
+    public function unsubscribe(Request $request, ManagerRegistry $doctrine, LoggerInterface $appUserInfoLogger, Session $session, TokenStorageInterface $token):Response{
+
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $usuario = $this->getUser(); //recuperamos usuario logeado
+        
+        $formulario = $this->createForm(UserDeleteFormType::class, $usuario);
+        $formulario->handleRequest($request);
+
+        if ($formulario->isSubmitted() && $formulario->isValid()) {
+            
+            // pone a NULL el user_id de las películas relacionadas
+            foreach ($usuario->getPlaces() as $place) {
+                $usuario->removePlace($place);
+            }
+
+
+
+            // $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $doctrine->getManager();
+            $entityManager->remove($usuario);
+            $entityManager->flush();
+
+            $token->setToken(NULL);
+            $session->invalidate();
+
+
+            // TODO: como cerrar sesión!!!
+            // $session->get('security.token_storage')->setToken(null);
+            // $session->get('session')->invalidate();
+
+            // flashear el mensaje
+            $message = 'Usuario '.$usuario->getDisplayname().' eliminado correctamente';
+            $this->addFlash('success', $message);
+            
+            // loguear el message
+            $message = 'Usuario '.$usuario->getDisplayname().' se ha dado de baja.';
+            $appUserInfoLogger->warning($message);
+
+            // redirigimos a portada
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->renderForm("user/delete.html.twig", [
+            "formulario" => $formulario,
+            "usuario" => $usuario
+        ]);
+
     }
 }

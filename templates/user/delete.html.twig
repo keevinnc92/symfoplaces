@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+{% block title %}Portada{% endblock %}
+{% block main %}
+	{{ parent() }}
+
+        <!-- Projects-->
+        <section class="projects-section bg-light" id="projects">
+            <div class="container px-4 px-lg-5">
+
+                <!-- Project Two Row-->
+                <div class="row gx-0 justify-content-center">
+                    <div class="col-lg-6 order-lg-first">
+
+
+						<div class="bg-light border row align-items-center justify-content-center my-3">
+							<div class="col-6 p-4">
+								<p>Delete account <b>{{ usuario.displayname}}</b></p>
+								<p>Email: <b>{{ usuario.email}}</b></p>
+								<p>Please confirm the delete user operation using the form.</p>
+								{{ form(formulario) }}
+							</div>
+							<div class="col-6 text-center bg-light">
+								<figure class="p-2">
+									<img class="rounded border movie-cover" style="max-width: 120px" 
+									 src="{{ asset('images/template/user_delete.png') }}">
+								</figure>
+							</div>
+						</div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+{% endblock %}
+
+
