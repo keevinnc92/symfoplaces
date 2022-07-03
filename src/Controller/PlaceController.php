@@ -14,18 +14,13 @@ use App\Form\SearchFormType;
 
 use Psr\Log\LoggerInterface;
 use App\Service\SimpleSearchService;
+use App\Service\PaginatorService;
+
 
 
 #[Route('/place')]
 class PlaceController extends AbstractController
 {
-    #[Route('/', name: 'app_place_index', methods: ['GET'])]
-    public function index(PlaceRepository $placeRepository): Response
-    {
-        return $this->render('place/index.html.twig', [
-            'places' => $placeRepository->findAll(),
-        ]);
-    }
 
     #[Route('/new', name: 'app_place_new', methods: ['GET', 'POST'])]
     public function new(Request $request, PlaceRepository $placeRepository, LoggerInterface $appInfoLogger): Response
@@ -130,6 +125,24 @@ class PlaceController extends AbstractController
         return $this->renderForm("place/search.html.twig", [
             "formulario" => $formulario,
             "places" => $places
+        ]);
+
+    }
+
+    #[Route("/page/{pagina}", defaults: ["pagina"=>1], name: 'app_place_index', methods: ['GET'])]
+
+    public function index(PlaceRepository $placeRepositoryint, $pagina, PaginatorService $paginator): Response
+    {
+        // le indicamos al paginador que tabajaremos con Pelicula
+        $paginator->setEntityType('App\Entity\Place');
+
+        // le pedimos que nos recupere todas las películas con paginación
+        $places = $paginator->findAllEntities($pagina);
+
+        // carga la visa del listado de películas, pasándole toda la información
+        return $this->renderForm("place/index.html.twig", [
+            "places" => $places,
+            "paginator" => $paginator
         ]);
 
     }

@@ -3,71 +3,63 @@
 
 	use Doctrine\ORM\Tools\Pagination\Paginator;
 	use Doctrine\ORM\EntityManagerInterface;
-	use Doctrine\ORM\Query;
 
 	class PaginatorService{
 
-		// propiedades 
-		private $resultsPerPage;
-		private $em;
-		private $actualPage = 1;
-		private $totalResults = 0;
+		// propiedades que necesitaré
+		private $limit, $entityManager, $entityType = '';
+		private $paginaActual = 1, $total = 0;
+
 
 		// CONSTRUCTOR
-		public function __construct(int $resultsPerPage, EntityManagerInterface $em){
-			$this->resultsPerPage = $resultsPerPage;
-			$this->em = $em;
+		//como usaré autowiring indicaré los valores por defecto en services.yaml
+		public function __construct(int $limit, EntityManagerInterface $entityManager){
+			$this->limit = $limit;
+			$this->entityManager = $entityManager;
 		}
 
-		public function setResultsPerPage(int $resultsPerPage){
-			$this->resultsPerPage = $resultsPerPage;
+		public function setEntityType(string $entityType){
+			$this->entityType = $entityType;
 		}
 
-		public function getActualPage():int{
-			return $this->actualPage;
+		public function setLimit(int $limit){
+			$this->limit = $limit;
 		}
 
-		public function getTotalResults():int{
-			return $this->totalResults;
+		public function getPaginaActual():int{
+			return $this->paginaActual;
+		}
+
+		public function getTotal():int{
+			return $this->total;
 		}
 
 		public function getTotalPages():int{
-			return ceil($this->totalResults / $this->resultsPerPage);
+			return ceil($this->total / $this->limit);
 		}
 
 
 		// MÉTODOS
 
-		public function paginate(Query $dql, $page = 1):Paginator{
-
+		public function paginate($dql, $page = 1):Paginator{
 			$paginator = new Paginator($dql);
 
 			$paginator->getQuery()
-				->setFirstResult($this->resultsPerPage * ($page - 1))
-				->setMAxResults($this->resultsPerPage);
+				->setFirstResult($this->limit * ($page - 1))
+				->setMAxResults($this->limit);
 
 			$this->paginaActual = $page;
-			$this->totalResults = $paginator->count();
+			$this->total = $paginator->count();
 			
 			return $paginator;
 		}
 
+		public function findAllEntities(int $paginaActual = 1):Paginator{
+			$consulta = $this->entityManager->createQuery(
+				"SELECT p FROM $this->entityType p 
+				ORDER BY p.id DESC");
 
-
-		public function findAll(
-			string $entity,
-			int $page = 1,
-			string $orderField = 'id',
-			String $order = 'DESC'
-		):Paginator{
-			$consulta = $this->em->createQuery(
-				"SELECT p FROM $entity p 
-				ORDER BY p.$orderField $order");
-
-			return $this->paginate($consulta, $page);
+			return $this->paginate($consulta, $paginaActual);
 		}
-
-
-
 
 	}

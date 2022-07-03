@@ -16,37 +16,20 @@
                         </div>
                         <h1>List place</h1>
 
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Id</th>
-                                    <th>Name</th>
-                                    <th>Valoration</th>
-                                    <th>Country</th>
-                                    <th>Type</th>
-                                    <th>actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            {% for place in places %}
-                                <tr>
-                                    <td>{{ place.id }}</td>
-                                    <td>{{ place.name }}</td>
-                                    <td>{{ place.valoration }}</td>
-                                    <td>{{ place.country }}</td>
-                                    <td>{{ place.type }}</td>
-                                    <td>
-                                        <a href="{{ path('app_place_show', {'id': place.id}) }}">show</a>
-                                        <a href="{{ path('app_place_edit', {'id': place.id}) }}">edit</a>
-                                    </td>
-                                </tr>
-                            {% else %}
-                                <tr>
-                                    <td colspan="6">no records found</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+
+                        {# LISTADO DE PELÍCULAS #}
+                        {% include '/place/only_list.html.twig' %}
+
+                        {# PAGINADOR #}
+                        {% 
+                            include '/includes/paginator.html.twig' with
+                            {
+                                'route': 'app_place_index',
+                                'entidades': 'place',
+                            }
+                         %}
+
+
                     </div>
                 </div>
             </div>
